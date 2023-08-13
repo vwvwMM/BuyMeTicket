@@ -1,0 +1,13 @@
+.wrapper {
+  width: 100%;
+  @include ltr-rtl('padding-left', var(--cui-sidebar-occupy-start, 0));
+  will-change: auto;
+  @include transition(padding 0.15s);
+}
+.nav-item {
+  font-size: 1.5rem;
+  font-weight: 500;
+}
+.nav-active {
+  background-color: var(--cui-cyan);
+}

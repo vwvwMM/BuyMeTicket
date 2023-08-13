@@ -1,0 +1,35 @@
+steps:
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args: ['-c', 'docker pull gcr.io/$PROJECT_ID/clink || true']
+  # Build the container image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '--cache-from'
+      - 'gcr.io/$PROJECT_ID/clink'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/clink'
+      - '--build-arg'
+      - 'MONGO_URI=${_MONGO_URI}'
+      - '--build-arg'
+      - 'REACT_APP_fbAPIid=${_FB_APPID}'
+      - '.'
+  # Push the container image to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/clink']
+  # Deploy container image to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'clink'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/clink'
+      - '--region'
+      - 'asia-east1'
+images:
+  - 'gcr.io/$PROJECT_ID/clink'
+timeout: 1200s
